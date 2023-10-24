@@ -43,8 +43,9 @@ const responseBuilder = (similarity:number,guessedWord:string) => {
 async function handler(_req: Request): Promise<Response> {
 	try {
 		const guess = await extractGuess(_req);
-		const result = await similarity("chien",guess).then((res : number) => String(res));
-		return new Response(result);
+		const new_similarity = await similarity("chien",guess);
+		const response = responseBuilder(new_similarity,guess);
+		return new Response(response);
 	} catch(e) {
 		console.error(e);
 		return new Response("Error : ",e);
