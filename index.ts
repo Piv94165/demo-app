@@ -30,6 +30,16 @@ const extractGuess = async (req: Request) => {
   return guess;
 };
 
+const responseBuilder = (similarity:number,guessedWord:string) => {
+	if (similarity>.7) {
+		return `Tu es proche avec ${guessedWord}`;
+	}
+	if (similarity < .3) {
+		return `Tu es bien loiiiin avec ${guessedWord}`;
+	}
+	return `Courage, ça progresse avec ${guessedWord}`;
+}
+
 async function handler(_req: Request): Promise<Response> {
 	try {
 		const guess = await extractGuess(_req);
