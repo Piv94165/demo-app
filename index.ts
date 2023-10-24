@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
+import * as fs from 'fs';
 
 const similarity = async (wordToFind:string,guessedWord:string) => {
 	const body = {
@@ -31,6 +32,9 @@ const extractGuess = async (req: Request) => {
 };
 
 const responseBuilder = (similarity:number,guessedWord:string) => {
+	if (similarity == 1) {
+		return `Ouiii ! ${guessedWord} était bien le mot`;
+	}
 	if (similarity>.7) {
 		return `Tu es proche avec ${guessedWord}`;
 	}
@@ -40,10 +44,22 @@ const responseBuilder = (similarity:number,guessedWord:string) => {
 	return `Courage, ça progresse avec ${guessedWord}`;
 }
 
+const generateWordToGuess = () => {
+	let dateTime = new Date()
+	let month = dateTime.getUTCMonth() + 1; //months from 1-12
+	let day = dateTime.getUTCDate();
+	let year = dateTime.getUTCFullYear();
+	const List = fs.readFileSync('List.txt','utf8');
+	const wordsList = List.split('\r\n');
+	const index = (day+month+year)% wordsList.length;
+	return wordsList[index];
+}
+
 async function handler(_req: Request): Promise<Response> {
 	try {
 		const guess = await extractGuess(_req);
-		const new_similarity = await similarity("chien",guess);
+		const wordToGuess = generateWordToGuess();
+		const new_similarity = await similarity(wordToGuess,guess);
 		const response = responseBuilder(new_similarity,guess);
 		return new Response(response);
 	} catch(e) {
