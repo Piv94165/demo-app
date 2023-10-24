@@ -33,7 +33,7 @@ const extractGuess = async (req: Request) => {
 async function handler(_req: Request): Promise<Response> {
 	try {
 		const guess = await extractGuess(_req);
-		const result = await String(similarity("chien",guess));
+		const result = await similarity("chien",guess).then((res : number) => String(res));
 		return new Response(result);
 	} catch(e) {
 		console.error(e);
