@@ -6,7 +6,7 @@ function similarity(word1:string,word2:string) : string {
 
 async function handler(_req: Request): Promise<Response> {
 	const result : string = similarity("toto","chat");
-  return new Response("Hello World");
+  return new Response(result);
 }
 
 serve(handler);
